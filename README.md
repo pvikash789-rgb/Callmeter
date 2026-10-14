@@ -10,11 +10,10 @@ The Integration Hub Usage Dashboard counts transactions by spoke, action, protoc
 
 ## What it does today
 
-`callmeter.py` reads two tables through the REST Table API, read-only:
+`callmeter.py` reads three tables through the REST Table API, read-only:
 
 - `sys_flow_context` (flow runs)
 - `sys_outbound_http_log` (outbound calls made by flow steps)
-
 - `sys_audit` (record history, to see whether each run changed anything)
 
 It links each call to the flow run whose time window contains it, checks whether that run changed anything on its record, and prints per flow: runs, calls, failed calls, calls on runs with no effect, and the total that bought nothing. A per-call CSV is written locally and is git-ignored.
