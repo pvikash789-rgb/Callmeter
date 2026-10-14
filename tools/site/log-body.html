@@ -64,6 +64,14 @@
       <dt>Why</dt><dd>An admin should be able to say yes without a security review of the whole instance. The 2026 Basic Auth restriction also pushes API access toward dedicated accounts.</dd></dl>
     </div></article>
 
+    <article class="entry"><div class="id">09<span>14 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Method</span></div>
+      <h3>Define waste as "the run changed nothing", and read it from record history</h3>
+      <dl><dt>Rule</dt><dd>A transaction bought nothing if its call failed, or if the run that made it changed nothing on its record. Changes come from <code>sys_audit</code>, filtered to the flow's account and the run's own record and time window.</dd>
+      <dt>Why</dt><dd>It needs no knowledge of what each flow is meant to do, so it works on any flow. It flagged 5 of 5 such runs in the lab, including my own baseline flow.</dd>
+      <dt>Limits</dt><dd>A flow that changes a different record, sends an email or calls out only to read data will look like it changed nothing. The report will call these "no visible effect" and let the admin judge, rather than call them waste outright.</dd></dl>
+    </div></article>
+
   </div>
 </section>
 </div>

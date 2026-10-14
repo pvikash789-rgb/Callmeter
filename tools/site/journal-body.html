@@ -8,6 +8,7 @@
     <span class="fact">Started <b>13 Oct 2026</b></span>
     <span class="fact">Current phase <b>1 · Build</b></span>
     <span class="fact">Spike result <b>8 of 8 transactions predicted</b></span>
+    <span class="fact">Test lab <b>7 of 8 transactions bought nothing</b></span>
   </div>
 </header>
 
@@ -55,7 +56,7 @@
   <h2 id="plan">Build plan</h2>
   <div class="phases">
     <div class="phase"><div class="when">Days 1 to 2<span class="pill done">Done</span></div><div class="body"><h3>Phase 0 · Spike</h3><p>Test instance, four test flows, 10 runs, predictions checked against the usage ledger. Passed: 8 of 8.</p></div></div>
-    <div class="phase"><div class="when">Week 1<span class="pill now">In progress</span></div><div class="body"><h3>Phase 1 · Tracer</h3><p>Link every transaction to its flow and run, flag failed calls, and detect runs that changed nothing after paying for a call.</p></div></div>
+    <div class="phase"><div class="when">Week 1<span class="pill now">In progress</span></div><div class="body"><h3>Phase 1 · Tracer</h3><p>Done: every transaction linked to its flow and run, failed calls flagged, runs that changed nothing detected from record history. Next: a lab flow that uses its call well, so the report has a healthy baseline.</p></div></div>
     <div class="phase"><div class="when">Week 2<span class="pill next">Planned</span></div><div class="body"><h3>Phase 2 · Report and fixes</h3><p>A report an admin can read in a minute: flows ranked by wasted transactions, the cause, and the change that would save them.</p></div></div>
     <div class="phase"><div class="when">Week 3<span class="pill next">Planned</span></div><div class="body"><h3>Phase 3 · Real instances</h3><p>Admins run it on their own sub-production instances. Track how often the time-based link is exact.</p></div></div>
   </div>
@@ -69,7 +70,7 @@
     <tbody>
       <tr><td>Transactions predicted before running, against the usage ledger</td><td>Exact</td><td class="v">8 of 8 (test instance)</td></tr>
       <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">8 of 8, 0 ambiguous</td></tr>
-      <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">Not built yet (2 expected)</td></tr>
+      <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">5 of 5 (IH-02: 2, IH-01: 3)</td></tr>
       <tr><td>Admins who ran it on their own instance</td><td>3 to 5</td><td class="v">0</td></tr>
     </tbody>
   </table>
@@ -79,6 +80,14 @@
 <section aria-labelledby="journal">
   <h2 id="journal">Journal</h2>
   <div class="journal">
+    <article class="entry">
+      <div class="date">14 Oct 2026 · Day 2, night</div>
+      <h3>7 of 8 transactions bought nothing, including my own baseline</h3>
+      <p>Added a second check: did the run change anything? For each run, the tool reads the record history (<code>sys_audit</code>) for changes made by the flow's account on the run's own record while the run was going. Each run carries a link to the record that started it, so no guessing by time is needed for this part.</p>
+      <p>On IH-02 it found the one priority 1 run that wrote its work note, and the 2 runs that paid for a call and then stopped at the check. That is the pattern I built the flow to show.</p>
+      <p>It also flagged all 3 IH-01 runs. I had treated IH-01 as the healthy baseline, but it fetches data and never uses it, so every one of its transactions bought nothing. The tool was right and my lab was wrong. Real flows nearly always do something with a response, so next I'm adding a version of IH-01 that writes what it fetched into a work note.</p>
+      <p>Across the lab: 8 transactions, 2 on calls that failed, 5 on runs that changed nothing, 1 that did its job.</p>
+    </article>
     <article class="entry">
       <div class="date">14 Oct 2026 · Day 2, evening</div>
       <h3>The ledger matches: 8 of 8</h3>

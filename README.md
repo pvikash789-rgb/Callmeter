@@ -15,7 +15,11 @@ The Integration Hub Usage Dashboard counts transactions by spoke, action, protoc
 - `sys_flow_context` (flow runs)
 - `sys_outbound_http_log` (outbound calls made by flow steps)
 
-It links each call to the flow run whose time window contains it and prints, per flow: runs, calls, failed calls, and failed calls on runs marked Complete. A per-call CSV is written locally and is git-ignored.
+- `sys_audit` (record history, to see whether each run changed anything)
+
+It links each call to the flow run whose time window contains it, checks whether that run changed anything on its record, and prints per flow: runs, calls, failed calls, calls on runs with no effect, and the total that bought nothing. A per-call CSV is written locally and is git-ignored.
+
+On the test lab: 8 transactions, 2 failed, 5 on runs that changed nothing, 1 useful.
 
 ## Run it
 
@@ -35,14 +39,14 @@ python callmeter.py
 ## Access and trust
 
 - Read-only. It never writes to the instance.
-- Use a dedicated account, not an admin login: set it to Web Service Access Only, give it read access to the two tables above, and nothing else.
+- Use a dedicated account, not an admin login: set it to Web Service Access Only, give it read access to the three tables above, and nothing else.
 - Since the 2026 Basic Auth restriction, accounts using basic authentication for the API need the `snc_basic_auth_api_access` role or Web Service Access Only. Without it the script gets HTTP 401.
 - Credentials come from environment variables. Never commit them, and never commit anything read from an instance.
 
 ## Limits
 
 - Calls are linked to runs by time. Two runs of different flows calling out in the same second could be ambiguous; the script reports how many were.
-- Detecting runs that changed nothing is not built yet.
+- "Changed nothing" means no change on the run's own record by the flow's account (`CALLMETER_RUN_AS`, default `system`). A flow that updates another record, sends an email or only reads data will show as no visible effect.
 - Tested on one developer instance (Australia release).
 
 ## Site
