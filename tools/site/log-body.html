@@ -1,0 +1,69 @@
+<div class="wrap">
+<header>
+  <div class="eyebrow">Callmeter · Decision log · Vikash Kumar · Last updated 14 Oct 2026</div>
+  <h1>Decision log</h1>
+  <p>The main product decisions behind Callmeter, with the reasoning and the alternatives I considered. Newest at the bottom.</p>
+</header>
+
+<section aria-labelledby="ledger">
+  <h2 id="ledger">Decisions</h2>
+  <div class="ledger">
+
+    <article class="entry"><div class="id">01<span>13 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Problem selection</span></div>
+      <h3>Choose the problem on usefulness and viability, and only what I can prove</h3>
+      <dl><dt>Checks</dt><dd>Evidence of demand. Not already shipped or clearly on the roadmap. Data reachable through a public API. Value that can be measured. A working prototype in about two to three weeks. And one check added for this platform: the result has to be provable on a free Personal Developer Instance against the platform's own numbers.</dd>
+      <dt>Not used</dt><dd>Fit with my own past experience. It can break a tie, nothing more.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">02<span>13 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Dropped</span><span class="tag">Already shipped</span></div>
+      <h3>Drop ideas the platform already covers</h3>
+      <dl><dt>Why</dt><dd>Searches with no results (AI Search analytics), duplicate knowledge articles (Knowledge Center), CMDB data quality, test coverage, notification noise and missing ACLs all have native features in recent releases. Reassignment ping-pong is partly covered by the Insights dashboard and Process Mining.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">03<span>13 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Dropped</span><span class="tag">Can't test</span></div>
+      <h3>Write about AI assist spend, don't build it</h3>
+      <dl><dt>Why</dt><dd>Assists are now metered and an agent run can cost 25 to 150 assists, so the demand is real. But Now Assist and AI agents can't be installed on a free developer instance, so I can't check any number against the platform. A tool I can't verify isn't worth showing.</dd>
+      <dt>Instead</dt><dd>A short written note, kept separate from the build.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">04<span>13 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Build</span></div>
+      <h3>Build the Integration Hub transaction tracer, with the SLA audit as a fallback</h3>
+      <dl><dt>Why</dt><dd>Integration Hub is now part of every tier edition, transactions come from a yearly allowance, and the native dashboard doesn't show which flow spent them or whether the call was useful. The platform keeps its own ledger, so every number can be checked.</dd>
+      <dt>Fallback</dt><dd>An audit of how much SLA time On Hold hides across all tickets. Fully provable on a developer instance, but without a dated reason to care now.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">05<span>13 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Method</span></div>
+      <h3>Spike first, with written kill rules</h3>
+      <dl><dt>Stop if</dt><dd>The REST step isn't available on a free instance; the ledger shows nothing 48 hours after the test runs; or the counts don't match and one more round can't explain it.</dd>
+      <dt>Prediction</dt><dd>Four flows, 10 runs, 8 transactions: 0 for the control, 3 for one call, 3 for call before check (2 of them wasted), 2 for the failing call.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">06<span>14 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Naming</span></div>
+      <h3>Call it Callmeter, with no platform name in it</h3>
+      <dl><dt>Why</dt><dd>It says what the tool measures: calls that cost money. ServiceNow's trademark guidelines don't allow their marks, or anything that looks like part of their "Now" family, in a third party's product name, repository name or domain. Compatibility goes in the description instead, as in "Callmeter, for use with ServiceNow® Integration Hub".</dd>
+      <dt>Also</dt><dd>Every page carries the trademark attribution and says the project isn't affiliated with ServiceNow, Inc. The pages don't copy ServiceNow's colours or design.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">07<span>14 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Spike</span><span class="tag">Passed</span></div>
+      <h3>The spike passed: 8 of 8</h3>
+      <dl><dt>Result</dt><dd>The usage ledger showed 6 transactions for the shared GET action and 2 for the failing action, exactly as predicted. All 8 calls were linked to their flow runs through the API.</dd>
+      <dt>Learned</dt><dd>Failed calls are billed and their runs still show Complete. The ledger counts per action, so flows that share an action can't be told apart. The ledger updates in a batch, not live.</dd></dl>
+    </div></article>
+
+    <article class="entry"><div class="id">08<span>14 Oct</span></div><div class="body">
+      <div class="meta"><span class="tag">Trust</span></div>
+      <h3>Read-only, and a dedicated account for real use</h3>
+      <dl><dt>Decision</dt><dd>The tool only reads two tables and writes nothing to the instance. For real instances, the setup guide will recommend a separate account set to Web Service Access Only with the minimum read access, instead of an admin login.</dd>
+      <dt>Why</dt><dd>An admin should be able to say yes without a security review of the whole instance. The 2026 Basic Auth restriction also pushes API access toward dedicated accounts.</dd></dl>
+    </div></article>
+
+  </div>
+</section>
+</div>

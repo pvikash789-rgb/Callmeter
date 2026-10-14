@@ -1,0 +1,132 @@
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">Build journal · Vikash Kumar · Work in progress</div>
+  <h1>Callmeter</h1>
+  <p class="lede">A tool for admins of the ServiceNow® platform that traces each ServiceNow® Integration Hub transaction back to the flow that made it, and flags the transactions that bought nothing.</p>
+  <div class="facts">
+    <span class="fact">Started <b>13 Oct 2026</b></span>
+    <span class="fact">Current phase <b>1 · Build</b></span>
+    <span class="fact">Spike result <b>8 of 8 transactions predicted</b></span>
+  </div>
+</header>
+
+<section aria-labelledby="problem">
+  <h2 id="problem">The problem</h2>
+  <p>Integration Hub counts a transaction when a flow calls an outside system, such as a REST call to another tool. In 2026 ServiceNow bundled Workflow Data Fabric Foundation, which includes Integration Hub, into every product tier edition, so more instances now run flows that spend from a yearly transaction allowance.</p>
+  <p>The Integration Hub Usage Dashboard shows those transactions by spoke, action, protocol and calling app scope, month by month. On my test instance, the usage table behind it records one row per action per month with a single count. What it can't say is which flow spent the transactions, whether the call worked, or whether the run that paid for it did anything useful. Admins on the ServiceNow Community describe the same gap: an instance shows "Overallocated" and there is no built-in way to find which flow is the heavy user.</p>
+  <div class="callout">
+    <h3>What the tool will do</h3>
+    <p>For each flow, show the transactions it spent, how many went to calls that failed, and how many went to runs that changed nothing, with a plain-language cause and a suggested fix. It reads through the standard REST Table API, only reads, and doesn't keep instance data.</p>
+  </div>
+</section>
+
+<section aria-labelledby="discovery">
+  <h2 id="discovery">How I found it</h2>
+  <p>I wanted to build something real on the ServiceNow platform rather than write about it. The problem had to be useful and viable for real customers, whatever my own background, and I had to be able to prove it on a free Personal Developer Instance.</p>
+  <div class="funnel">
+    <div class="stage"><div class="count">21</div><div><p>Ideas scouted across four areas: pricing and dated changes, IT service workflows, platform administration, and AI agents.</p><p class="sub">Sources: ServiceNow Community threads and their view counts, the ServiceNow Store, product documentation and release notes for the Zurich and Australia releases.</p></div></div>
+    <div class="stage"><div class="count">5</div><div><p>Passed five checks: evidence of demand, not already shipped, data reachable through a public API, value that can be measured, and provable on a free developer instance.</p><p class="sub">Shortlist: this tool, an audit of how much SLA time On Hold hides, a finder for unused fulfiller licences, a written note on AI assist spend, and a catalog cleanup finder.</p></div></div>
+    <div class="stage"><div class="count">1</div><div><p>Chosen: Integration Hub transactions, with the SLA audit kept as a fallback.</p><p class="sub">It touches money, it has a native dashboard to build next to, and its numbers can be checked against the platform's own ledger.</p></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="deadends">
+  <h2 id="deadends">Ideas I dropped and why</h2>
+  <div class="kills">
+    <div class="kill"><span class="tag">Already shipped</span><h3>Searches with no results</h3><p class="why">The AI Search analytics dashboard already lists queries with no results and queries with no clicks.</p><p class="lesson">Check the docs for the exact capability first.</p></div>
+    <div class="kill"><span class="tag">Already shipped</span><h3>Duplicate knowledge articles</h3><p class="why">Knowledge Center, new in the Australia release, already flags near-duplicate articles and gaps.</p><p class="lesson">New releases close gaps fast.</p></div>
+    <div class="kill"><span class="tag">Can't test</span><h3>AI assist spend</h3><p class="why">The strongest hook, but Now Assist and AI agents can't be installed on a free developer instance, so I can't check any number against the platform.</p><p class="lesson">Kept as a written note, not a build.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="approach">
+  <h2 id="approach">How I'm approaching the build</h2>
+  <ul>
+    <li><strong>Predict, then check against the platform.</strong> Every test flow gets a written prediction before it runs. The proof is matching the platform's own numbers, not my own.</li>
+    <li><strong>Small test lab.</strong> Each test flow shows one pattern and has a clear name: no call, one call, call before check, failing call. Details are in <a href="{{REPO}}/tree/main/lab">lab/</a>.</li>
+    <li><strong>Build next to the dashboard, not against it.</strong> The native dashboard already counts transactions. The tool adds the flow, the outcome and the fix.</li>
+    <li><strong>Trust first.</strong> Read-only. Credentials stay in the admin's own environment. No instance data in the repo. For real use I recommend a separate read-only account set to Web Service Access Only.</li>
+    <li><strong>How I work.</strong> I use an AI assistant (Claude) for research and coding. Problem choice, product decisions and trade-offs are mine, and each is recorded with its reasoning in the decision log.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="plan">
+  <h2 id="plan">Build plan</h2>
+  <div class="phases">
+    <div class="phase"><div class="when">Days 1 to 2<span class="pill done">Done</span></div><div class="body"><h3>Phase 0 · Spike</h3><p>Test instance, four test flows, 10 runs, predictions checked against the usage ledger. Passed: 8 of 8.</p></div></div>
+    <div class="phase"><div class="when">Week 1<span class="pill now">In progress</span></div><div class="body"><h3>Phase 1 · Tracer</h3><p>Link every transaction to its flow and run, flag failed calls, and detect runs that changed nothing after paying for a call.</p></div></div>
+    <div class="phase"><div class="when">Week 2<span class="pill next">Planned</span></div><div class="body"><h3>Phase 2 · Report and fixes</h3><p>A report an admin can read in a minute: flows ranked by wasted transactions, the cause, and the change that would save them.</p></div></div>
+    <div class="phase"><div class="when">Week 3<span class="pill next">Planned</span></div><div class="body"><h3>Phase 3 · Real instances</h3><p>Admins run it on their own sub-production instances. Track how often the time-based link is exact.</p></div></div>
+  </div>
+</section>
+
+<section aria-labelledby="results">
+  <h2 id="results">Results so far</h2>
+  <div class="tablewrap">
+  <table class="metrics">
+    <thead><tr><th>Measure</th><th>Target</th><th>Actual</th></tr></thead>
+    <tbody>
+      <tr><td>Transactions predicted before running, against the usage ledger</td><td>Exact</td><td class="v">8 of 8 (test instance)</td></tr>
+      <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">8 of 8, 0 ambiguous</td></tr>
+      <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">Not built yet (2 expected)</td></tr>
+      <tr><td>Admins who ran it on their own instance</td><td>3 to 5</td><td class="v">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section aria-labelledby="journal">
+  <h2 id="journal">Journal</h2>
+  <div class="journal">
+    <article class="entry">
+      <div class="date">14 Oct 2026 · Day 2, evening</div>
+      <h3>The ledger matches: 8 of 8</h3>
+      <p>The usage table behind the Integration Hub Usage Dashboard updates in a batch, not live. Hours after the morning's runs it showed two rows: 6 transactions for the action <code>IH Spike GET todo</code> and 2 for <code>IH Spike GET fail</code>. My prediction, written before any flow ran, was 6 and 2.</p>
+      <p><strong>Failed calls are billed.</strong> Both calls that returned HTTP 500 were counted as transactions.</p>
+      <p><strong>The ledger is per action, not per flow.</strong> IH-01 and IH-02 use the same action, so their 6 transactions sit on one line. From the ledger alone there is no way to tell that 3 came from each flow, or that 2 of IH-02's 3 were spent on runs that did nothing.</p>
+    </article>
+    <article class="entry">
+      <div class="date">14 Oct 2026 · Day 2, afternoon</div>
+      <h3>A first tracer that links each call to its flow</h3>
+      <p>Wrote a small Python script that reads two tables through the REST Table API: flow runs and the outbound HTTP log. It keeps only calls made by flow steps and links each one to the run whose time window contains it.</p>
+      <p>The first run failed with HTTP 401. This year's Basic Auth restriction only lets accounts with the <code>snc_basic_auth_api_access</code> role use basic authentication for the API, so the admin account on my test instance needed it. A real install should use its own read-only account instead.</p>
+      <p>Result: 10 runs, 8 calls, all 8 linked, none ambiguous. Per flow: IH-00 made 0 calls, IH-01 3, IH-02 3, IH-03 2, and both of IH-03's calls failed while their runs were marked Complete.</p>
+    </article>
+    <article class="entry">
+      <div class="date">14 Oct 2026 · Day 2, morning</div>
+      <h3>Four test flows, and a failed call that looks healthy</h3>
+      <p>On a free developer instance the REST step was locked until I activated the Integration Hub installer plugin from the developer site. After that, I built four flows, each triggered by a new incident with a matching short description:</p>
+      <ul>
+        <li><strong>IH-00 no call:</strong> adds a work note. Control, 0 transactions expected.</li>
+        <li><strong>IH-01 one call:</strong> one REST GET to a public test API.</li>
+        <li><strong>IH-02 call before check:</strong> makes the call first, then only acts if the incident is priority 1.</li>
+        <li><strong>IH-03 failing call:</strong> calls an address that always returns HTTP 500.</li>
+      </ul>
+      <p>10 incidents produced 10 runs, all marked Complete. That includes both IH-03 runs, where the call returned 500. The action's "Don't Treat as Error" output is true by default, so a failing call doesn't fail the flow.</p>
+      <p>The outbound HTTP log has every call with its status code and time. Its source table is Step Instance, but at the default log level the Source record ID is empty, so the log knows a flow step made the call but not which one. Matching by time linked all 8 calls to their runs by hand.</p>
+    </article>
+    <article class="entry">
+      <div class="date">13 Oct 2026 · Day 1</div>
+      <h3>From 21 ideas to one, and a spike with kill rules</h3>
+      <p>Scouted 21 ideas in four areas and dropped the ones ServiceNow already ships or that I couldn't test on a free instance. Picked Integration Hub transactions for its link to money and because the platform has its own ledger to check against.</p>
+      <p>Wrote the spike plan before touching the instance. It would stop if the REST step wasn't available for free, if the ledger still showed nothing 48 hours after the runs, or if the counts didn't match and one more round couldn't explain why. Prediction on record: 10 runs, 8 transactions.</p>
+    </article>
+  </div>
+</section>
+
+<section aria-labelledby="sources">
+  <h2 id="sources">Key sources</h2>
+  <ul class="sources">
+    <li><a href="https://www.servicenow.com/docs/r/XRgEFx7nPN6ciT_BBIvnbg/YQiwIh0UNsqUGKnKcD1BQg">Product tiers (ServiceNow docs, Australia)</a></li>
+    <li><a href="https://www.servicenow.com/docs/r/VM54fVshMHa6Dr9TT6Nepw/rw8LTJS23Fi1cBaw8FGjaA">Transaction reports in the Integration Hub Usage Dashboard (ServiceNow docs)</a></li>
+    <li><a href="https://www.servicenow.com/community/architect-forum/integration-hub-starter-showing-overallocated/m-p/3519139">Integration Hub Starter showing overallocated (Community, Apr 2026)</a></li>
+    <li><a href="https://www.servicenow.com/community/servicenow-ai-platform-forum/how-does-servicenow-count-integration-hub-transactions/td-p/1099879">How does ServiceNow count Integration Hub transactions? (Community)</a></li>
+    <li><a href="https://www.servicenow.com/community/enterprise-analytics-forum/regarding-detailed-breakdown-of-integrationhub-license/td-p/3574666">Detailed breakdown of Integration Hub usage (Community, Jul 2026)</a></li>
+    <li><a href="https://www.servicenow.com/docs/r/build-workflows/workflow-studio/enable-flow-reporting.html">Activate flow reporting (ServiceNow docs)</a></li>
+    <li><a href="https://www.servicenow.com/docs/r/platform-security/authentication/basic-auth-restriction.html">Basic authentication restriction (ServiceNow docs)</a></li>
+  </ul>
+  <p class="note">Every product decision and its reasoning is in the <a href="decisions.html">decision log</a>.</p>
+</section>
+
+</div>

@@ -1,0 +1,17 @@
+# Credentials
+.env
+*.env
+
+# Anything read from an instance stays local
+*.csv
+data/
+out/
+reports/local/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
