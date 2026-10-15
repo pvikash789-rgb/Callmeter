@@ -131,6 +131,11 @@ def main():
     has_source = any(r.get("source_record") for r in runs)
     effect = {}
     for start, end, r in windows:
+        if has_source and not r.get("source_record"):
+            # Scheduled or manual run: no trigger record, so nothing to check
+            # changes against. Counted as no visible effect.
+            effect[r["sys_id"]] = []
+            continue
         hits = [a for a in audits if start <= ts(a["sys_created_on"]) <= end
                 and (not has_source or a["documentkey"] == r.get("source_record"))]
         effect[r["sys_id"]] = sorted({a["fieldname"] for a in hits})
@@ -171,12 +176,33 @@ def main():
     tw = sum(x["wasted"] for x in summary.values())
     print("-" * len(header))
     print(f"{'Total':<28}{len(runs):>6}{tc:>7}{'':>8}{'':>11}{tw:>16}")
+    # Scheduled flows: project calls to 30 days from the observed interval
+    proj = []
+    for name in sorted(summary):
+        fr = sorted((ts(r["sys_created_on"]) for r in runs if r["name"] == name and not r.get("source_record")))
+        if len(fr) < 3 or len(fr) != summary[name]["runs"]:
+            continue
+        gaps = sorted((b - a).total_seconds() for a, b in zip(fr, fr[1:]))
+        interval = gaps[len(gaps) // 2]
+        if interval <= 0:
+            continue
+        per_run = summary[name]["calls"] / summary[name]["runs"]
+        monthly = 30 * 24 * 3600 / interval * per_run
+        proj.append((name, interval, per_run, monthly))
+    if proj:
+        print()
+        print("Scheduled flows, projected to 30 days at the observed interval:")
+        for name, interval, per_run, monthly in proj:
+            print(f"  {name:<28} every {interval/60:.1f} min, {per_run:.1f} calls per run -> about {monthly:,.0f} calls per 30 days ({monthly*365/30:,.0f} per year)")
+
     print()
     print("Each run:")
     for start, end, r in windows:
         rc = calls_by_run.get(r["sys_id"], [])
         codes = ",".join(c["response_status"] for c in rc) or "-"
         changed = ",".join(effect[r["sys_id"]]) or "nothing"
+        if not r.get("source_record") and has_source:
+            changed = "no trigger record"
         print(f"  {r['sys_created_on']} UTC  {r['name']:<26} state={r.get('state','')}  calls={codes:<8} changed={changed}")
     for c in unlinked:
         print(f"  {c['sys_created_on']} UTC  call {c['response_status']} {c['hostname']} NOT LINKED to any run")
