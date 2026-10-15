@@ -8,7 +8,7 @@
     <span class="fact">Started <b>13 Oct 2026</b></span>
     <span class="fact">Current phase <b>1 · Build</b></span>
     <span class="fact">Spike result <b>8 of 8 transactions predicted</b></span>
-    <span class="fact">Test lab <b>7 of 10 transactions bought nothing</b></span>
+    <span class="fact">Test lab <b>19 of 22 transactions bought nothing</b></span>
   </div>
 </header>
 
@@ -69,8 +69,8 @@
     <thead><tr><th>Measure</th><th>Target</th><th>Actual</th></tr></thead>
     <tbody>
       <tr><td>Transactions predicted before running, against the usage ledger</td><td>Exact</td><td class="v">8 of 8 (test instance)</td></tr>
-      <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">10 of 10 (1 overlap, resolved correctly)</td></tr>
-      <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">5 of 5 (IH-02: 2, IH-01: 3)</td></tr>
+      <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">22 of 22 (1 overlap, resolved correctly)</td></tr>
+      <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">17 of 17 (IH-01: 3, IH-02: 2, IH-05: 12)</td></tr>
       <tr><td>Admins who ran it on their own instance</td><td>3 to 5</td><td class="v">0</td></tr>
     </tbody>
   </table>
@@ -80,6 +80,14 @@
 <section aria-labelledby="journal">
   <h2 id="journal">Journal</h2>
   <div class="journal">
+    <article class="entry">
+      <div class="date">15 Oct 2026 · Day 3, evening</div>
+      <h3>One polling flow, and what native views show</h3>
+      <p>Checked the native views by hand before claiming anything. The Integration Hub Usage Dashboard can be viewed by Overview, Spokes, or Protocols and Features, but not by flow. The FDIH Dashboard has an IH Usage tab, which showed 8 transactions this month split by action, and a Flow Executions tab, which lists runs with their state and calling source. The two tabs aren't joined: no run shows how many transactions it used. The same header showed 0 errored flow runs in the last 24 hours, a window that included the two IH-03 runs whose calls failed. Automation Center, whose Executions dashboard shows failed transactions by flow according to its documentation, isn't installed on a developer instance, so I couldn't test it.</p>
+      <p>Then I built the waste pattern customers describe most: polling. IH-05 runs every 5 minutes, makes the same GET call and does nothing with the result, the way a sync job polls when nothing has changed. I ran it for one hour.</p>
+      <p>Prediction: 12 runs and 12 calls. Result: 12 runs, exactly 5 minutes apart, 12 calls, all linked, all flagged as bought nothing. At that rate one polling flow makes about 8,640 calls in 30 days, or about 105,000 a year. A Community reply puts the current Starter allowance at 100,000 transactions a year. I haven't been able to confirm that figure, but if it's right, one small polling flow would use all of it.</p>
+      <p>Lab total so far: 22 transactions, 19 of them bought nothing. The lab is built to show patterns, so that ratio says nothing about real instances.</p>
+    </article>
     <article class="entry">
       <div class="date">15 Oct 2026 · Day 3, morning</div>
       <h3>A flow that uses its call, and the first overlap</h3>

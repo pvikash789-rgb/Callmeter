@@ -10,6 +10,7 @@ All are triggered when an incident is created with a short description starting 
 | IH-02 call before check | Same REST GET first, then adds a work note only if priority is 1 | 3 (one at priority 1) | 3, of which 2 wasted | see above | Match (waste detection not built yet) |
 | IH-03 failing call | REST GET to `httpbin.org/status/500` | 2 | 2 (hedged: failed calls might not count) | 2 for the failing action | Match: failed calls are billed |
 | IH-04 call used | Same REST GET, then writes the response body into work notes | 2 | 2, of which 0 wasted | not yet re-checked | Match on the tracer |
+| IH-05 polling | Repeat trigger every 5 minutes, same REST GET, nothing else. Ran 60 minutes. | none (scheduled) | 12 | not yet re-checked | Match: 12 runs, 12 calls |
 | **Total (spike, IH-00 to IH-03)** | | **10** | **8** | **8** | **8 of 8** |
 
 ## Actions
@@ -25,7 +26,11 @@ All are triggered when an incident is created with a short description starting 
 - The per-call record is `sys_outbound_http_log`. Source table is Step Instance; Source record ID is empty at the default Basic log level.
 - All 10 runs were marked Complete, including both IH-03 runs where the call returned HTTP 500.
 
-## Tracer result (day 3)
+## Tracer result (day 3, evening)
+
+24 runs, 22 calls, 22 linked. Bought nothing: 19 (IH-01 3, IH-02 2, IH-03 2, IH-05 12). Useful: 3 (IH-02 1, IH-04 2). IH-05 at every 5 minutes projects to about 8,640 calls per 30 days.
+
+## Tracer result (day 3, morning)
 
 12 runs, 10 calls, 10 linked (1 call fitted two runs' windows and was given to the later run, which was correct). Bought nothing: IH-01 3 (response never used), IH-02 2 (stopped at the check), IH-03 2 (failed). Useful: IH-02 1, IH-04 2.
 

@@ -18,7 +18,7 @@ The Integration Hub Usage Dashboard counts transactions by spoke, action, protoc
 
 It links each call to the flow run whose time window contains it, checks whether that run changed anything on its record, and prints per flow: runs, calls, failed calls, calls on runs with no effect, and the total that bought nothing. A per-call CSV is written locally and is git-ignored.
 
-On the test lab: 10 transactions, 2 failed, 5 on runs that changed nothing, 3 useful.
+On the test lab: 22 transactions, 2 failed, 17 on runs that changed nothing (12 of them from one polling flow in one hour), 3 useful. Scheduled flows are projected to 30 days from their observed interval.
 
 ## Run it
 
