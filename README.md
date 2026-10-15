@@ -18,7 +18,7 @@ The Integration Hub Usage Dashboard counts transactions by spoke, action, protoc
 
 It links each call to the flow run whose time window contains it, checks whether that run changed anything on its record, and prints per flow: runs, calls, failed calls, calls on runs with no effect, and the total that bought nothing. A per-call CSV is written locally and is git-ignored.
 
-On the test lab: 8 transactions, 2 failed, 5 on runs that changed nothing, 1 useful.
+On the test lab: 10 transactions, 2 failed, 5 on runs that changed nothing, 3 useful.
 
 ## Run it
 
@@ -44,7 +44,7 @@ python callmeter.py
 
 ## Limits
 
-- Calls are linked to runs by time. Two runs of different flows calling out in the same second could be ambiguous; the script reports how many were.
+- Calls are linked to runs by time. When a call fits more than one run's window it goes to the run that started most recently, and the script reports how many were ambiguous. Linking by step is planned.
 - "Changed nothing" means no change on the run's own record by the flow's account (`CALLMETER_RUN_AS`, default `system`). A flow that updates another record, sends an email or only reads data will show as no visible effect.
 - Tested on one developer instance (Australia release).
 

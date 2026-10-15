@@ -8,7 +8,7 @@
     <span class="fact">Started <b>13 Oct 2026</b></span>
     <span class="fact">Current phase <b>1 · Build</b></span>
     <span class="fact">Spike result <b>8 of 8 transactions predicted</b></span>
-    <span class="fact">Test lab <b>7 of 8 transactions bought nothing</b></span>
+    <span class="fact">Test lab <b>7 of 10 transactions bought nothing</b></span>
   </div>
 </header>
 
@@ -56,7 +56,7 @@
   <h2 id="plan">Build plan</h2>
   <div class="phases">
     <div class="phase"><div class="when">Days 1 to 2<span class="pill done">Done</span></div><div class="body"><h3>Phase 0 · Spike</h3><p>Test instance, four test flows, 10 runs, predictions checked against the usage ledger. Passed: 8 of 8.</p></div></div>
-    <div class="phase"><div class="when">Week 1<span class="pill now">In progress</span></div><div class="body"><h3>Phase 1 · Tracer</h3><p>Done: every transaction linked to its flow and run, failed calls flagged, runs that changed nothing detected from record history. Next: a lab flow that uses its call well, so the report has a healthy baseline.</p></div></div>
+    <div class="phase"><div class="when">Week 1<span class="pill now">In progress</span></div><div class="body"><h3>Phase 1 · Tracer</h3><p>Done: every transaction linked to its flow and run, failed calls flagged, runs that changed nothing detected from record history. Added IH-04, a flow that uses its call, as the healthy case.</p></div></div>
     <div class="phase"><div class="when">Week 2<span class="pill next">Planned</span></div><div class="body"><h3>Phase 2 · Report and fixes</h3><p>A report an admin can read in a minute: flows ranked by wasted transactions, the cause, and the change that would save them.</p></div></div>
     <div class="phase"><div class="when">Week 3<span class="pill next">Planned</span></div><div class="body"><h3>Phase 3 · Real instances</h3><p>Admins run it on their own sub-production instances. Track how often the time-based link is exact.</p></div></div>
   </div>
@@ -69,7 +69,7 @@
     <thead><tr><th>Measure</th><th>Target</th><th>Actual</th></tr></thead>
     <tbody>
       <tr><td>Transactions predicted before running, against the usage ledger</td><td>Exact</td><td class="v">8 of 8 (test instance)</td></tr>
-      <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">8 of 8, 0 ambiguous</td></tr>
+      <tr><td>Calls linked to the flow run that made them</td><td>All</td><td class="v">10 of 10 (1 overlap, resolved correctly)</td></tr>
       <tr><td>Runs that paid for a call and changed nothing, detected automatically</td><td>All</td><td class="v">5 of 5 (IH-02: 2, IH-01: 3)</td></tr>
       <tr><td>Admins who ran it on their own instance</td><td>3 to 5</td><td class="v">0</td></tr>
     </tbody>
@@ -80,6 +80,13 @@
 <section aria-labelledby="journal">
   <h2 id="journal">Journal</h2>
   <div class="journal">
+    <article class="entry">
+      <div class="date">15 Oct 2026 · Day 3, morning</div>
+      <h3>A flow that uses its call, and the first overlap</h3>
+      <p>Added IH-04: the same GET call as IH-01, but the flow writes the response into the incident's work notes. To do that I had to add a Response Body output to the shared action first. Until then the response stayed inside the action and no flow could use it, which is part of why IH-01 wasted every call.</p>
+      <p>Prediction: 2 calls, both with an effect, 0 bought nothing. Result: exactly that. The lab now has 10 transactions: 1 useful from IH-02, 2 from IH-04, and 7 that bought nothing.</p>
+      <p>It also gave the first overlap. The two IH-04 runs started 14 seconds apart, and the first run's record was still being updated when the second run's call went out, so that call fitted inside both runs' time windows. The tool gives an overlapping call to the run that started most recently, which was right here. On a busy instance this will happen more often, so linking calls by their step, not just by time, is now on the list.</p>
+    </article>
     <article class="entry">
       <div class="date">14 Oct 2026 · Day 2, night</div>
       <h3>7 of 8 transactions bought nothing, including my own baseline</h3>
