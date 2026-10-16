@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Callmeter One-Page Note</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a case-study column. Problem first, then the discovery funnel, approach, build phases, and a dated journal at the end. */
+:root{
+  --bg:#f4f5f2; --surface:#ffffff; --fg:#1d2320; --muted:#5d6862; --line:#d9ded9;
+  --accent:#2e5c8a; --accent-soft:#e3ecf5; --kill:#9a3b2f; --kill-soft:#f6e6e3; --ok:#2c6b3f; --ok-soft:#e3f1e6; --warn:#8a5a00; --warn-soft:#fbf0d9;
+  --display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131614; --surface:#1b201d; --fg:#e5e9e6; --muted:#9ca8a1; --line:#2d3530;
+  --accent:#8db8e3; --accent-soft:#1b2a3a; --kill:#e8988c; --kill-soft:#33201d; --ok:#7fc994; --ok-soft:#18291d; --warn:#e8b65c; --warn-soft:#2e2615; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131614; --surface:#1b201d; --fg:#e5e9e6; --muted:#9ca8a1; --line:#2d3530;
+  --accent:#8db8e3; --accent-soft:#1b2a3a; --kill:#e8988c; --kill-soft:#33201d; --ok:#7fc994; --ok-soft:#18291d; --warn:#e8b65c; --warn-soft:#2e2615; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15.5px;line-height:1.65}
+.wrap{max-width:780px;margin:0 auto;padding-inline:16px;padding-block:44px 72px;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:2.3rem;font-weight:600}
+h2{font-size:1.4rem;font-weight:600}
+h3{font-size:1.05rem;font-weight:600}
+p{margin:0;max-width:68ch}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:flex;flex-direction:column;gap:10px}
+.lede{font-size:1.08rem;color:var(--fg)}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.fact{font-family:var(--mono);font-size:.78rem;border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:3px 8px;color:var(--muted)}
+.fact b{color:var(--fg);font-weight:500}
+section{display:flex;flex-direction:column;gap:14px}
+.callout{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:4px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.funnel{display:flex;flex-direction:column;gap:6px}
+.stage{display:grid;grid-template-columns:56px minmax(0,1fr);gap:14px;align-items:start;padding:10px 0;border-bottom:1px dashed var(--line)}
+.stage:last-child{border-bottom:none}
+.count{font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.1;text-align:right}
+.stage p{font-size:.95rem}
+.stage .sub{color:var(--muted);font-size:.88rem}
+.kills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:640px){.kills{grid-template-columns:1fr}}
+.kill{background:var(--kill-soft);border-radius:6px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kill .why{font-size:.88rem}
+.kill .lesson{font-size:.84rem;color:var(--muted)}
+.tag{font-family:var(--mono);font-size:.7rem;color:var(--kill);text-transform:uppercase;letter-spacing:.06em}
+ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.phases{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.phase{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+@media (max-width:540px){.phase{grid-template-columns:1fr;gap:4px}}
+.phase .when{font-family:var(--mono);font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.phase .body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.pill{font-family:var(--mono);font-size:.7rem;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pill.now{background:var(--accent-soft);color:var(--accent)}
+.pill.next{border:1px solid var(--line);color:var(--muted)}
+.pill.done{background:var(--ok-soft);color:var(--ok)}
+.metrics{width:100%;border-collapse:collapse;font-size:.92rem}
+.tablewrap{overflow-x:auto}
+.metrics th,.metrics td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.metrics th{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.metrics td.v{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.journal{display:flex;flex-direction:column;gap:18px}
+.entry{display:flex;flex-direction:column;gap:8px;padding-left:16px;border-left:2px solid var(--line)}
+.entry .date{font-family:var(--mono);font-size:.78rem;color:var(--accent)}
+a{color:var(--accent);text-underline-offset:2px}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.note{font-size:.86rem;color:var(--muted)}
+.sources li{font-size:.9rem}
+.legal{font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;max-width:none}
+</style>
+</head>
+<body>
+<nav style="max-width:860px;margin:0 auto;padding:16px 16px 0;font-family:var(--mono);font-size:.8rem"><a href="index.html">Build journal &rarr;</a> &middot; <a href="https://github.com/pvikash789-rgb/Callmeter">Code on GitHub</a></nav>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">One-page note · Vikash Kumar · October 2026</div>
+  <h1>Which flow spent this transaction?</h1>
+  <p class="lede">The ServiceNow® platform records every Integration Hub transaction and every flow run. Nothing joins the two, so an admin can't see which flow spent a transaction, or whether it bought anything.</p>
+</header>
+
+<section aria-labelledby="tested">
+  <h2 id="tested">What I tested</h2>
+  <p>On a free developer instance (Australia release) I built six small flows, each showing one pattern: no call, one call, a call before a check, a failing call, a call whose result is used, and a flow that polls every 5 minutes. I wrote down every prediction before the flows ran, then checked it against the platform's own usage table.</p>
+  <div class="facts">
+    <span class="fact">Ledger match <b>8 of 8</b> transactions</span>
+    <span class="fact">Calls linked to their run <b>22 of 22</b></span>
+    <span class="fact">Polling flow <b>12 of 12</b> predicted</span>
+  </div>
+</section>
+
+<section aria-labelledby="found">
+  <h2 id="found">What I found</h2>
+  <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:10px;max-width:68ch">
+    <li><strong>The two halves sit on separate tabs.</strong> The FDIH Dashboard shows transactions by action on one tab and flow runs on another. No run shows what it used. The usage table counts per action per month, so two flows sharing one action are a single line.</li>
+    <li><strong>A failed call looks healthy.</strong> Two calls that returned HTTP 500 were both counted as transactions. Their runs were marked Complete, and the dashboard header showed 0 errored runs for those 24 hours.</li>
+    <li><strong>Some calls buy nothing, and nothing says so.</strong> A flow that calls out before checking whether it needs to, or polls when nothing has changed, pays for every call. One flow polling every 5 minutes makes about 8,640 calls in 30 days.</li>
+  </ol>
+  <p class="note">The data for all of this exists on the platform, and admins do find workarounds. What the usual workarounds miss is the outcome of each call, and the history: flow runs are purged after about 30 days, so the evidence is gone by renewal.</p>
+</section>
+
+<section aria-labelledby="report">
+  <h2 id="report">What the tool shows</h2>
+  <p>Callmeter is a small open-source, read-only tool that joins the call log, the flow runs and the record history through the REST Table API. On the test lab:</p>
+  <div class="tablewrap">
+  <table class="metrics">
+    <thead><tr><th>Flow</th><th>Calls</th><th>Bought nothing</th><th>Why</th><th>Fix</th></tr></thead>
+    <tbody>
+      <tr><td>IH-05 polling</td><td class="v">12</td><td class="v">12</td><td>Polls every 5 minutes, result unused</td><td>Poll less often, or trigger on change</td></tr>
+      <tr><td>IH-01 one call</td><td class="v">3</td><td class="v">3</td><td>Response never used</td><td>Use the response, or remove the call</td></tr>
+      <tr><td>IH-02 call before check</td><td class="v">3</td><td class="v">2</td><td>Calls first, then stops at the check</td><td>Move the check before the call</td></tr>
+      <tr><td>IH-03 failing call</td><td class="v">2</td><td class="v">2</td><td>Endpoint returns 500, run still Complete</td><td>Fix the endpoint, stop and alert on error</td></tr>
+      <tr><td>IH-04 call used</td><td class="v">2</td><td class="v">0</td><td>Writes the response to the incident</td><td>None needed</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="note">The lab is built to show these patterns, so its share of waste says nothing about real instances. That's what I want to learn next.</p>
+</section>
+
+<section aria-labelledby="ask">
+  <h2 id="ask">Where I'd value your view</h2>
+  <ul>
+    <li>Do customers ask which flows are using their transactions, and what do they do today?</li>
+    <li>Is "calls that bought nothing" a useful way to frame it, or is there a better measure?</li>
+    <li>What am I missing about how integration-heavy customers run flows at scale?</li>
+  </ul>
+  <p class="note">Method, results and every decision: <a href="index.html">build journal</a> · <a href="decisions.html">decision log</a> · <a href="https://github.com/pvikash789-rgb/Callmeter">code</a>.</p>
+</section>
+
+</div>
+<div class="wrap" style="padding-block:0 40px">
+<p class="legal">Callmeter is an independent open-source project. It is not affiliated with, sponsored by or endorsed by ServiceNow, Inc. ServiceNow, the ServiceNow logo, Now, and other ServiceNow marks are trademarks and/or registered trademarks of ServiceNow, Inc., in the United States and/or other countries. Other company and product names may be trademarks of the respective companies with which they are associated.</p>
+</div>
+</body>
+</html>

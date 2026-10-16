@@ -4,6 +4,7 @@ Usage: python3 tools/site/build.py docs
 
 journal-head.html + journal-body.html -> docs/index.html      (build journal)
 log-head.html     + log-body.html     -> docs/decisions.html  (decision log)
+journal-head.html + note-body.html    -> docs/note.html       (one-page note)
 Every page gets the same nav and the attribution footer the ServiceNow
 trademark guidelines ask for on any page that uses their marks.
 """
@@ -35,4 +36,8 @@ def page(head, body, other, label):
 
 (out / "index.html").write_text(page("journal-head.html", "journal-body.html", "decisions.html", "Decision log"))
 (out / "decisions.html").write_text(page("log-head.html", "log-body.html", "index.html", "Build journal"))
+note_head = (SRC / "journal-head.html").read_text().replace("<title>Callmeter Build Journal</title>", "<title>Callmeter One-Page Note</title>")
+(SRC / ".note-head.html").write_text(note_head)
+(out / "note.html").write_text(page(".note-head.html", "note-body.html", "index.html", "Build journal"))
+(SRC / ".note-head.html").unlink()
 print("built", out)
